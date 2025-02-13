@@ -1,8 +1,9 @@
-import { Exclude } from 'class-transformer';
+import { Project } from 'src/projects/entities/project.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,9 +16,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  @Exclude()
+  @Column({ select: false })
   password: string;
 
   @Column()
@@ -33,4 +32,7 @@ export class User {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Project, (project) => project.userId)
+  projects: Project[];
 }
