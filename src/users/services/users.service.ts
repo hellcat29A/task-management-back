@@ -4,22 +4,30 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SigninUserDto } from '../dto/signin-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserEntity } from 'src/entities/user.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const { email, password, firstName, lastName } = createUserDto;
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      avatar,
+      phoneNumber,
+      roleId,
+    } = createUserDto;
 
     const userExists = await this.userRepository.findOne({ where: { email } });
     if (userExists) {
@@ -33,6 +41,9 @@ export class UsersService {
       password: hashedPassword,
       firstName,
       lastName,
+      avatar,
+      phoneNumber,
+      roleId,
     });
     try {
       await this.userRepository.save(user);
@@ -41,14 +52,14 @@ export class UsersService {
       throw new InternalServerErrorException(error);
     }
   }
-  async findOne(email: string): Promise<User> {
+  async findOne(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new Error(`User with email ${email} not found`);
+      throw new Error(`UserEntity with email ${email} not found`);
     }
     return user;
   }
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     const users = await this.userRepository.find();
     if (!users) {
       throw new Error('No Users Found');
@@ -83,10 +94,10 @@ export class UsersService {
       },
     };
   }
-  async findById(id: number): Promise<User> {
+  async findById(id: number): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      throw new Error(`User with email ${id} not found`);
+      throw new Error(`UserEntity with email ${id} not found`);
     }
     return user;
   }

@@ -1,7 +1,13 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  IsOptional,
+  IsString,
+  IsPhoneNumber,
+} from 'class-validator';
 
 export class CreateUserDto {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -11,8 +17,21 @@ export class CreateUserDto {
   password: string;
 
   @IsNotEmpty()
+  @IsString()
   firstName: string;
 
   @IsNotEmpty()
+  @IsString()
   lastName: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsPhoneNumber() // Validate phone number format
+  phoneNumber?: string;
+
+  @IsNotEmpty()
+  roleId: number; // The role ID must be provided when creating a user
 }

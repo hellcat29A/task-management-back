@@ -1,31 +1,30 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { TasksEntity } from './task.entity';
 
-@Entity('projects')
-export class Project {
+@Entity('priorities')
+export class PrioritiesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string;
+  level: string;
 
   @Column()
   description: string;
 
-  @ManyToMany(() => User, (user) => user.projects)
-  user: User;
-
-  @Column()
-  userId: number;
   @CreateDateColumn()
   createdAt: Date;
+
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => TasksEntity, (task) => task.priority)
+  tasks: TasksEntity[];
 }
